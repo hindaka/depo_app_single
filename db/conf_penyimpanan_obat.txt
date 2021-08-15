@@ -1,0 +1,51 @@
+-- phpMyAdmin SQL Dump
+-- version 4.7.4
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Generation Time: Jun 19, 2020 at 11:33 PM
+-- Server version: 10.1.28-MariaDB
+-- PHP Version: 7.1.10
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+SET AUTOCOMMIT = 0;
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Database: `dbsirs_v3`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `conf_penyimpanan_obat`
+--
+
+CREATE TABLE `conf_penyimpanan_obat` (
+  `id_conf_obat` int(11) NOT NULL,
+  `id_warehouse` int(11) NOT NULL,
+  `nama_penyimpanan` varchar(30) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `last_updated` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `conf_penyimpanan_obat`
+--
+ALTER TABLE `conf_penyimpanan_obat`
+  ADD PRIMARY KEY (`id_conf_obat`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `conf_penyimpanan_obat`
+--
+ALTER TABLE `conf_penyimpanan_obat`
+  MODIFY `id_conf_obat` int(11) NOT NULL AUTO_INCREMENT;

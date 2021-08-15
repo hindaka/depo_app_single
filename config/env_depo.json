@@ -1,0 +1,14 @@
+{
+  "IGD" :{
+    "id_depo":"57",
+    "nama_depo": "Depo Farmasi IGD"
+  },
+  "OK" : {
+    "id_depo":"60",
+    "nama_depo": "Depo Farmasi OK"
+  },
+  "ICU" : {
+    "id_depo":"NULL",
+    "nama_depo": "Depo Farmasi ICU"
+  }
+}

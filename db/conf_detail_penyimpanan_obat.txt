@@ -1,0 +1,30 @@
+--
+-- Table structure for table `conf_detail_penyimpanan`
+--
+
+CREATE TABLE `conf_detail_penyimpanan` (
+  `id_conf_detail` int(11) NOT NULL,
+  `id_conf_obat` int(11) NOT NULL,
+  `id_obat` int(11) NOT NULL,
+  `created_at` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `conf_detail_penyimpanan`
+--
+ALTER TABLE `conf_detail_penyimpanan`
+  ADD PRIMARY KEY (`id_conf_detail`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `conf_detail_penyimpanan`
+--
+ALTER TABLE `conf_detail_penyimpanan`
+  MODIFY `id_conf_detail` int(11) NOT NULL AUTO_INCREMENT;
