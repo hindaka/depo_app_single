@@ -37,13 +37,13 @@
                 <i class="fa fa-list-alt"></i> <span>Stok Obat Depo</span> <i class="fa fa-angle-left pull-right"></i>
               </a>
               <ul class="treeview-menu">
+                <li><a href="stok_master.php"><i class="fa fa-circle-o text-green"></i> MASTER OBAT</a></li>
                 <li><a href="stok_apbd.php"><i class="fa fa-circle-o text-blue"></i> OBAT APBD</a></li>
                 <li><a href="stok_blud.php"><i class="fa fa-circle-o text-yellow"></i> OBAT BLUD</a></li>
-                <li><a href="stok_master.php"><i class="fa fa-circle-o text-yellow"></i> MASTER OBAT</a></li>
               </ul>
             </li>
             <li><a href="find_obat.php"><i class="fa fa-circle-o text-yellow"></i> Pencarian Data Obat</a></li>
-            <li class="treeview">
+            <!-- <li class="treeview">
               <a href="#">
                 <i class="fa fa-list-alt"></i> <span>Pemeliharaan Obat <span class="label label-success">New</span></span> <i class="fa fa-angle-left pull-right"></i>
               </a>
@@ -64,8 +64,8 @@
                 </li>
                 <li><a href="#"><i class="fa fa-circle-o text-blue"></i> Cycle Counting</a></li>
               </ul>
-            </li>
-            <li class="header text-purple">LAPORAN</li>
+            </li> -->
+            <!-- <li class="header text-purple">LAPORAN</li>
             <li class="treeview">
               <a href="#">
                 <i class="fa fa-list-alt text-blue"></i> <span>Rekap Transaksi Keluar</span><i class="fa fa-angle-left pull-right"></i>
@@ -95,12 +95,11 @@
                       echo '<li><a href="rekap.php"><i class="fa fa-circle-o"></i> Transaksi Keluar Rajal</a></li>
                       <li><a href="rekapkeluar_ranap.php"><i class="fa fa-circle-o"></i> Transaksi Keluar Depo Farmasi '.$tipes[2].'</a></li>';
                     } ?>
-                    <!-- <li><a href="rekap_karyawan_rajal.php"><i class="fa fa-circle-o"></i> Transaksi Karyawan</a></li> -->
                   </ul>
                 </li>
               </ul>
             </li>
-            <li><a href="rekap_permintaan.php"><i class="fa fa-book text-blue"></i> Antar Depo <span class="label label-success">New</span></a></li>
+            <li><a href="rekap_permintaan.php"><i class="fa fa-book text-blue"></i> Antar Depo <span class="label label-success">New</span></a></li> -->
             <?php
             if ($tipes[2] == "OK") {
               echo '<li class="header">DOKUMEN</li>
@@ -116,7 +115,7 @@
                 <li><a href="conf_penyimpanan.php"><i class="fa fa-list"></i> Lemari/Rak Obat</a></li>
                 <li><a href="kadaluarsa_conf.php"><i class="fa fa-list"></i> Waktu Kontrol Kadaluarsa</a></li>
                 <li><a href="pengaturan_filter_transaksi.php"><i class="fa fa-list"></i> Rentang Waktu Transaksi</a></li>
-                <li><a href="tpn.php"><i class="fa fa-gear"></i> Data TPN&nbsp;<span class="badge bg-green">New</span></a></li>
+                <!-- <li><a href="tpn.php"><i class="fa fa-gear"></i> Data TPN&nbsp;<span class="badge bg-green">New</span></a></li> -->
                 <li><a href="cut_off_transaksi.php"><i class="fa fa-list"></i> Cut Off Transaksi</a></li>
                 <li><a href="cut_off_lemari_filter.php"><i class="fa fa-list"></i> Cut Off BY LEMARI&nbsp;<span class="badge bg-green">New</span></a></li>
                 <?php

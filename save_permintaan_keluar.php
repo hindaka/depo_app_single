@@ -29,14 +29,15 @@ if($mode=='draft'){
 	$list_barang = $get_list_barang->fetchAll(PDO::FETCH_ASSOC);
 	// print_r($list_barang);
 	foreach ($list_barang as $kartu) {
-		$tujuan = $kartu['nama_ruang'];
-		$id_obat = $kartu['id_obat'];
-		$id_depo = $kartu['id_depo'];
-		$sumber = $kartu['sumber_dana'];
-		$keterangan = "Permintaan dari ".$kartu['nama_ruang']." oleh ".$kartu['nama_peminta'];
-		$volume_in = $kartu['volume'];
+		$tujuan = isset($kartu['nama_ruang']) ? $kartu['nama_ruang'] : '';
+		$id_obat = isset($kartu['id_obat']) ? $kartu['id_obat'] : '';
+		$id_depo = isset($kartu['id_depo']) ? $kartu['id_depo'] : '';
+		$sumber = isset($kartu['sumber_dana']) ? $kartu['sumber_dana'] : '-';
+		$nama_peminta = isset($kartu['nama_peminta']) ? $kartu['nama_peminta'] : '-';
+		$keterangan = "Permintaan dari ".$tujuan." oleh ".$kartu['nama_peminta'];
+		$volume_in = isset($kartu['volume']) ? $kartu['volume'] : '0';
 		$volume_out=0;
-		$harga_beli = $kartu['harga_beli'];
+		$harga_beli = isset($kartu['harga_beli']) ? $kartu['harga_beli'] : '0';
 		$created_at = date('Y-m-d H:i:s');
 		$i=0;
 		$in_out="masuk";
@@ -47,7 +48,7 @@ if($mode=='draft'){
 			//sum
 			$get_sum = $db->query("SELECT SUM(volume_kartu_akhir) as sisa FROM kartu_stok_ruangan WHERE id_warehouse='".$id_depo."' AND id_obat='".$id_obat."' AND in_out='masuk' AND volume_kartu_akhir>0");
 			$sum = $get_sum->fetch(PDO::FETCH_ASSOC);
-			$sisa_stok = $sum['sisa'];
+			$sisa_stok = isset($sum['sisa']) ? $sum['sisa'] : 0;
 			$stmt = $db->query("UPDATE warehouse_stok SET stok=".$sisa_stok." WHERE id_warehouse='".$id_depo."' AND id_obat='".$id_obat."'");
 		}else{
 			$stmt = $db->prepare("INSERT INTO `warehouse_stok`(`id_warehouse`, `id_obat`, `stok`, `expired`, `no_batch`, `created_at`)VALUES (:id_warehouse,:id_obat,:stok,:expired,:no_batch,:created_at)");
@@ -60,7 +61,7 @@ if($mode=='draft'){
 			$stmt->execute();
 		}
 
-		$up_kartu = $db->query("UPDATE kartu_stok_ruangan SET in_out='keluar' WHERE id_kartu_ruangan='".$data['id_kartu']."'");
+		$up_kartu = $db->query("UPDATE kartu_stok_ruangan SET in_out='keluar' WHERE id_kartu_ruangan='".$kartu['id_kartu']."'");
 		//insert into warehouse yang dituju
 		$ins_kartu = $db->prepare("INSERT INTO `kartu_stok_ruangan`(`id_kartu_gobat`,`id_obat`,`id_warehouse`,`sumber_dana`,`volume_kartu_awal`, `volume_kartu_akhir`, `in_out`, `tujuan`, `volume_in`, `volume_out`, `harga_beli`,`harga_jual`,`id_tuslah`,`ket_tuslah`,`expired`,`no_batch`,`created_at`, `keterangan`,`ref`,`mem_id`) VALUES(:id_kartu_gobat,:id_barang,:id_warehouse,:sumber_dana,:volume_kartu_awal,:volume_kartu_akhir,:in_out,:tujuan,:volume_in,:volume_out,:harga_beli,:harga_jual,:id_tuslah,:ket_tuslah,:expired,:no_batch,:created_at,:keterangan,:ref,:mem_id)");
 		$ins_kartu->bindParam(":id_kartu_gobat",$kartu['id_kartu_gobat'],PDO::PARAM_INT);

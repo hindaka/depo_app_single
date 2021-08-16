@@ -20,7 +20,7 @@ $tipe_depo = $tipes[2];
 $conf = json_decode(file_get_contents("config/env_depo.json"), true);
 $id_depo = $conf[$tipe_depo]["id_depo"];
 //mysql data obat
-$h2 = $db->query("SELECT k.id_obat,k.id_warehouse,g.nama,g.sumber,g.jenis,g.satuan,SUM(k.volume_kartu_akhir) as stok FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE g.sumber='APBD' AND k.id_warehouse='" . $id_depo . "' GROUP BY k.id_obat");
+$h2 = $db->query("SELECT k.id_obat,k.id_warehouse,g.nama,k.sumber_dana as sumber,g.jenis,g.satuan,SUM(k.volume_kartu_akhir) as stok FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.sumber_dana='APBD' AND k.id_warehouse='" . $id_depo . "' AND g.flag_single_id='new' GROUP BY k.id_obat");
 $data2 = $h2->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>

@@ -140,16 +140,16 @@ $data2 = $h2->fetchAll(PDO::FETCH_ASSOC);
                                                 }
                                                 $idBtn = "btnSync" . $r2['id_obat'];
                                                 echo "<tr class='" . $color_block . "' style='" . $text_block . "'>
-																	<td>" . $r2['id_obat'] . "</td>
-																	<td>" . $r2['nama'] . "</td>
-																	<td>" . $r2['jenis'] . "</td>
-																	<td>" . $r2['stok'] . "</td>
-																	<td>" . $r2['satuan'] . "</td>
-                                  <td>
-                                    <button id='" . $idBtn . "' onclick='syncData(this)' class='btn btn-block btn-sm bg-purple' data-id_obat='" . $r2['id_obat'] . "' data-ware='" . $r2['id_warehouse'] . "' data-sumber='APBD'><i class='fa fa-gears'></i> Sync Stok</button>
-																		<a class='btn btn-block btn-sm btn-success' href='kartu_persediaan.php?id=" . $r2['id_obat'] . "&ware=" . $r2['id_warehouse'] . "'><i class='fa fa-book'></i> Kartu Persediaan</a>
-																	</td>
-																</tr>";
+                                                        <td>" . $r2['id_obat'] . "</td>
+                                                        <td>" . $r2['nama'] . "</td>
+                                                        <td>" . $r2['jenis'] . "</td>
+                                                        <td>" . $r2['stok'] . "</td>
+                                                        <td>" . $r2['satuan'] . "</td>
+                        <td>
+                        <button id='" . $idBtn . "' onclick='syncData(this)' class='btn btn-block btn-sm bg-purple' data-id_obat='" . $r2['id_obat'] . "' data-ware='" . $r2['id_warehouse'] . "' data-sumber='APBD'><i class='fa fa-gears'></i> Sync Stok</button>
+                                                            <a class='btn btn-block btn-sm btn-success' href='kartu_persediaan.php?id=" . $r2['id_obat'] . "&ware=" . $r2['id_warehouse'] . "'><i class='fa fa-book'></i> Kartu Persediaan</a>
+                                                        </td>
+                                                    </tr>";
                                             }
                                             ?>
                                         </tbody>

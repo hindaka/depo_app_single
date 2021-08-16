@@ -24,7 +24,7 @@ $nama_depo = $conf[$tipe_depo]["nama_depo"];
 $sumber = isset($_GET['sumber']) ? $_GET['sumber'] : '';
 $today = date('Y-m-d H:i:s');
 //mysql data obat
-$h2 = $db->query("SELECT ks.id_obat,g.nama,g.satuan,g.jenis,SUM(ks.volume_kartu_akhir) as stok,g.sumber,ks.harga_beli,ks.no_batch,ks.expired FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) WHERE ks.in_out='masuk' AND ks.id_warehouse='" . $id_depo . "' AND g.sumber='".$sumber."' AND ks.volume_kartu_akhir>0 GROUP BY ks.id_obat,ks.no_batch,ks.harga_beli ORDER BY g.nama ASC");
+$h2 = $db->query("SELECT ks.id_obat,g.nama,g.satuan,g.jenis,SUM(ks.volume_kartu_akhir) as stok,g.sumber,ks.harga_beli,ks.no_batch,ks.expired FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) WHERE ks.in_out='masuk' AND ks.id_warehouse='" . $id_depo . "' AND g.sumber='".$sumber."' AND g.flag_single_id='new' AND ks.volume_kartu_akhir>0 GROUP BY ks.id_obat,ks.no_batch,ks.harga_beli ORDER BY g.nama ASC");
 $data_all = $h2->fetchAll(PDO::FETCH_ASSOC);
 //EXCEL
 header("Content-type: application/vnd.ms-excel");
@@ -36,6 +36,7 @@ Data Stok <?php echo $nama_depo; ?> per tanggal <?php echo $today; ?>
         <tr class="bg-blue">
             <th>ID Obat</th>
             <th>Nama</th>
+            <th>Merk</th>
             <th>Satuan</th>
             <th>Jenis</th>
             <th>Stok</th>
@@ -51,6 +52,7 @@ Data Stok <?php echo $nama_depo; ?> per tanggal <?php echo $today; ?>
             echo "<tr>
                     <td>" . $row['id_obat'] . "</td>
                     <td>" . $row['nama'] . "</td>
+                    <td>" . $row['merk'] . "</td>
                     <td>" . $row['satuan'] . "</td>
                     <td>" . $row['jenis'] . "</td>
                     <td>" . $row['stok'] . "</td>

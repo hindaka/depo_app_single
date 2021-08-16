@@ -74,8 +74,8 @@ $ins_kartu = $db->prepare("INSERT INTO `kartu_stok_ruangan`(`id_kartu_gobat`,`id
 $ins_kartu->bindParam(":id_kartu_gobat", $id_kartu_gobat, PDO::PARAM_INT);
 $ins_kartu->bindParam(":id_barang", $id_obat, PDO::PARAM_INT);
 $ins_kartu->bindParam(":id_warehouse", $id_depo, PDO::PARAM_INT);
-$ins_kartu->bindParam(":sumber_dana", $merk, PDO::PARAM_STR);
-$ins_kartu->bindParam(":merk", $sumber, PDO::PARAM_STR);
+$ins_kartu->bindParam(":sumber_dana", $sumber, PDO::PARAM_STR);
+$ins_kartu->bindParam(":merk", $merk, PDO::PARAM_STR);
 $ins_kartu->bindParam(":volume_kartu_awal", $volume_akhir, PDO::PARAM_INT);
 $ins_kartu->bindParam(":volume_kartu_akhir", $volume_akhir, PDO::PARAM_INT);
 $ins_kartu->bindParam(":in_out", $in_out, PDO::PARAM_STR);

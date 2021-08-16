@@ -27,7 +27,7 @@ if ($check['total_data'] == 1) {
     //sum
     $get_sum = $db->query("SELECT IFNULL(SUM(volume_kartu_akhir),0) as sisa FROM kartu_stok_ruangan WHERE id_warehouse='" . $id_warehouse . "' AND id_obat='" . $id_obat . "' AND in_out='masuk' AND volume_kartu_akhir>0");
     $sum = $get_sum->fetch(PDO::FETCH_ASSOC);
-    $sisa_stok = $sum['sisa'];
+    $sisa_stok = isset($sum['sisa']) ? $sum['sisa'] : 0;
     $stmt = $db->query("UPDATE warehouse_stok SET stok='" . $sisa_stok . "' WHERE id_warehouse='" . $id_warehouse . "' AND id_obat='" . $id_obat . "'");
     $feedback = [
         "status"=>"sukses",
