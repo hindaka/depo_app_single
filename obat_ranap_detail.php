@@ -34,13 +34,14 @@ $pasien = $get_pasien->fetch(PDO::FETCH_ASSOC);
 
 $sql_rincian = "SELECT rd.*,g.nama,g.expired,w.nama_ruang FROM rincian_detail_obat rd INNER JOIN rincian_transaksi_obat ro ON(rd.id_trans_obat=ro.id_trans_obat) INNER JOIN warehouse w ON(ro.id_warehouse=w.id_warehouse) INNER JOIN gobat g ON(rd.id_obat=g.id_obat) WHERE rd.id_rincian='" . $id_rincian . "' AND rd.id_trans_obat='" . $id_transaksi . "'";
 $e_rincian = $db->query($sql_rincian);
-if ($pasien['jpasien'] == 'Umum') {
-  $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new'");
-  // $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.nama_ruang='Farmasi'  AND g.fornas_app='tidak'");
-} else {
-  $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0  AND g.flag_single_id='new'");
-  // $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.nama_ruang='Farmasi' AND g.fornas_app='ya'");
-}
+// if ($pasien['jpasien'] == 'Umum') {
+//   $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new'");
+//   // $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.nama_ruang='Farmasi'  AND g.fornas_app='tidak'");
+// } else {
+//   $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0  AND g.flag_single_id='new'");
+//   // $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.nama_ruang='Farmasi' AND g.fornas_app='ya'");
+// }
+$list_obat = $db->query("SELECT k.*,g.nama,g.flag_single_id FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.in_out='masuk' AND k.volume_kartu_akhir>0");
 $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
 //function pembulatan 50 -> 100
 // function pembulatan($rupiah){
@@ -190,7 +191,18 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                       <option value="">---Pilih Obat---</option>
                       <?php
                       foreach ($obat_l as $o) {
-                        echo "<option value='" . $o['id_warehouse_stok'] . "'>" . $o['nama'] . " - " . $o['stok'] . "</option>";
+                        if ($o['flag_single_id'] == 'new') {
+                          if ($o['jenis'] == 'generik') {
+                            $text_nama = "(Single ID) " . $o['nama'] . "(" . $o['pabrikan'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+                          } else if ($o['jenis'] == 'non generik') {
+                            $text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+                          } else {
+                            $text_nama = "(Single ID) " . $o['nama']." ".$o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+                          }
+                        } else {
+                          $text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
+                        }
+                        echo "<option value='" . $o['id_kartu_ruangan'] . "|" . $o['id_obat'] . "|" . $o['volume_kartu_akhir'] . "|" . $o['id_warehouse'] . "'>" . $text_nama . "</option>";
                       }
                       ?>
                     </select>
@@ -254,6 +266,9 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                       <th>#</th>
                       <th>Tanggal Input</th>
                       <th>Nama</th>
+                      <th>Jenis</th>
+                      <th>Merk</th>
+                      <th>No Batch</th>
                       <th>Expired</th>
                       <th>Volume</th>
                       <th>Total</th>
@@ -294,9 +309,12 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
 																<td>" . $code . "</td>
                                 <td>" . $new_data . "</td>
                                 <td>" . $r['nama'] . "</td>
+                                <td>" . $r['jenis'] . "</td>
+                                <td>" . $r['merk'] . "</td>
+                                <td>" . $r['no_batch'] . "</td>
 																<td>" . $r['expired'] . "</td>
                                 <td>" . $r['volume'] . "</td>
-                                <td style='text-align:right'>" . number_format($r['sub_total'], 0, ',', '.') . "</td>
+                                <td style='text-align:right'>" . number_format($r['sub_total'], 4, ',', '.') . "</td>
                                 <td>
 																	<div class=\"btn-group\">
 																		<button type=\"button\" class=\"btn btn-sm dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
@@ -314,8 +332,8 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                   </tbody>
                   <tfoot>
                     <tr>
-                      <th colspan="5" style='text-align:right'>Total Biaya transaksi</th>
-                      <td colspan="2" style="text-align:right"><b>Rp.<?php echo number_format($total_biaya, 0, ',', '.'); ?></b></td>
+                      <th colspan="8" style='text-align:right'>Total Biaya transaksi</th>
+                      <td colspan="2" style="text-align:right"><b>Rp.<?php echo number_format($total_biaya, 4, ',', '.'); ?></b></td>
                       <td>&nbsp;</td>
                     </tr>
                   </tfoot>

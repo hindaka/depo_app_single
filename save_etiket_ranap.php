@@ -25,6 +25,7 @@ $takaran = isset($_POST['takaran']) ? $_POST['takaran'] : '';
 $minum = isset($_POST['minum']) ? $_POST['minum'] : '';
 $petunjuk = isset($_POST['petunjuk']) ? $_POST['petunjuk'] : '';
 $edate = isset($_POST['edate']) ? $_POST['edate'] : '';
+$no_batch = isset($_POST['no_batch']) ? $_POST['no_batch'] : '';
 
 // check in etiket_apotek is id_warehouse_out already been there
 $check_in = $db->query("SELECT * FROM etiket_apotek WHERE id_detail_rincian='".$id_detail_rincian."' ORDER BY id_etiket DESC LIMIT 1");
@@ -36,13 +37,14 @@ if($total_check==1){
 	$id_etiket = $check['id_etiket'];
 }else{
   // insert etiket_ranap
-  $save_etiket = $db->prepare("INSERT INTO `etiket_apotek`(`id_detail_rincian`, `sehari_x`, `takaran`, `diminum`, `petunjuk_khusus`, `expired_date`,`petugas`) VALUES (:id_detail_rincian,:sehari,:takaran,:diminum,:petunjuk,:expired,:petugas)");
+  $save_etiket = $db->prepare("INSERT INTO `etiket_apotek`(`id_detail_rincian`, `sehari_x`, `takaran`, `diminum`, `petunjuk_khusus`, `expired_date`,`no_batch`,`petugas`) VALUES (:id_detail_rincian,:sehari,:takaran,:diminum,:petunjuk,:expired,:no_batch,:petugas)");
   $save_etiket->bindParam(":id_detail_rincian",$id_detail_rincian,PDO::PARAM_INT);
   $save_etiket->bindParam(":sehari",$sehari,PDO::PARAM_STR);
   $save_etiket->bindParam(":takaran",$takaran,PDO::PARAM_STR);
   $save_etiket->bindParam(":diminum",$minum,PDO::PARAM_STR);
   $save_etiket->bindParam(":petunjuk",$petunjuk,PDO::PARAM_STR);
   $save_etiket->bindParam(":expired",$edate,PDO::PARAM_STR);
+  $save_etiket->bindParam(":no_batch",$no_batch,PDO::PARAM_STR);
 	$save_etiket->bindParam(":petugas",$id_petugas,PDO::PARAM_INT);
   $save_etiket->execute();
 	$id_etiket = $db->lastInsertId();

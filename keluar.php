@@ -31,7 +31,8 @@ $tgl_resep = $data4["tgl_resep"];
 $nomedrek = $data4["nomedrek"];
 $nama = $data4["nama"];
 //get list obat
-$list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new'");
+// $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new'");
+$list_obat = $db->query("SELECT ks.*,g.nama,g.flag_single_id FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) WHERE ks.in_out='masuk' AND ks.volume_kartu_akhir>0 AND ks.id_warehouse='" . $id_depo . "'");
 $obat = $list_obat->fetchAll(PDO::FETCH_ASSOC);
 $list_rtt = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new' ORDER BY g.nama ASC");
 $obat_rtt = $list_rtt->fetchAll(PDO::FETCH_ASSOC);
@@ -267,7 +268,18 @@ function pembulatan($total)
 											<option value="">---Pilih Obat---</option>
 											<?php
 											foreach ($obat as $o) {
-												echo "<option value='" . $o['id_warehouse_stok'] . "'>" . $o['nama'] . " - " . $o['stok'] . "</option>";
+												if ($o['flag_single_id'] == 'new') {
+													if ($o['jenis'] == 'generik') {
+														$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['pabrikan'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+													} else if ($o['jenis'] == 'non generik') {
+														$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+													} else {
+														$text_nama = "(Single ID) " . $o['nama'] . " | " . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+													}
+												} else {
+													$text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
+												}
+												echo "<option value='" . $o['id_kartu_ruangan'] . "|" . $o['id_obat'] . "|" . $o['volume_kartu_akhir'] . "|" . $o['id_warehouse'] . "'>" . $text_nama . "</option>";
 											}
 											?>
 										</select>

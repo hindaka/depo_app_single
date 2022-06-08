@@ -20,7 +20,7 @@ $tipe_depo = $tipes[2];
 $conf = json_decode(file_get_contents("config/env_depo.json"), true);
 $id_depo = $conf[$tipe_depo]["id_depo"];
 //mysql data obat
-$h2 = $db->query("SELECT k.id_obat,k.id_warehouse,g.nama,g.sumber,g.jenis,g.satuan,SUM(k.volume_kartu_akhir) as stok FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE g.flag_single_id='new' AND k.id_warehouse='" . $id_depo . "' GROUP BY k.id_obat");
+$h2 = $db->query("SELECT k.id_obat,k.id_warehouse,g.nama,g.kategori,g.satuan,SUM(k.volume_kartu_akhir) as stok FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE g.flag_single_id='new' AND k.id_warehouse='" . $id_depo . "' GROUP BY k.id_obat");
 $data2 = $h2->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -122,7 +122,7 @@ $data2 = $h2->fetchAll(PDO::FETCH_ASSOC);
                                             <tr class="info">
                                                 <th>No. ID</th>
                                                 <th>Nama Obat</th>
-                                                <th>Jenis/Kategori</th>
+                                                <th>Kategori</th>
                                                 <th>Volume (Stok)</th>
                                                 <th>Satuan</th>
                                                 <th>Action</th>
@@ -142,7 +142,7 @@ $data2 = $h2->fetchAll(PDO::FETCH_ASSOC);
                                                 echo "<tr class='" . $color_block . "' style='" . $text_block . "'>
                                                         <td>" . $r2['id_obat'] . "</td>
                                                         <td>" . $r2['nama'] . "</td>
-                                                        <td>" . $r2['jenis'] . "</td>
+                                                        <td>" . $r2['kategori'] . "</td>
                                                         <td>" . $r2['stok'] . "</td>
                                                         <td>" . $r2['satuan'] . "</td>
                         <td>
