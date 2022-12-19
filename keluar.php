@@ -21,8 +21,8 @@ $tipe_depo = $tipes[2];
 $conf = json_decode(file_get_contents("config/env_depo.json"), true);
 $id_depo = $conf[$tipe_depo]["id_depo"];
 $hariini = date("d/m/Y");
-//tampilkan data obat Q`WSQ 
-$h3 = $db->query("SELECT wo.*,g.nama FROM `warehouse_out` wo INNER JOIN warehouse_stok ws ON(ws.id_warehouse_stok=wo.id_warehouse_stok) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE id_resep='$id_resep'");
+//tampilkan data obat
+$h3 = $db->query("SELECT wo.*,g.nama,ks.jenis,ks.merk,ks.pabrikan,ks.no_batch,ks.expired FROM `warehouse_out` wo INNER JOIN warehouse_stok ws ON(ws.id_warehouse_stok=wo.id_warehouse_stok) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) INNER JOIN kartu_stok_ruangan ks ON(wo.id_kartu_ruangan=ks.id_kartu_ruangan) WHERE id_resep='$id_resep'");
 $data3 = $h3->fetchAll(PDO::FETCH_ASSOC);
 //get tanggal
 $h4 = $db->query("SELECT * FROM resep WHERE id_resep='" . $id_resep . "'");
@@ -34,7 +34,7 @@ $nama = $data4["nama"];
 // $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new'");
 $list_obat = $db->query("SELECT ks.*,g.nama,g.flag_single_id FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) WHERE ks.in_out='masuk' AND ks.volume_kartu_akhir>0 AND ks.id_warehouse='" . $id_depo . "'");
 $obat = $list_obat->fetchAll(PDO::FETCH_ASSOC);
-$list_rtt = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new' ORDER BY g.nama ASC");
+$list_rtt = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 ORDER BY g.nama ASC");
 $obat_rtt = $list_rtt->fetchAll(PDO::FETCH_ASSOC);
 function pembulatan($total)
 {
@@ -326,6 +326,9 @@ function pembulatan($total)
 											<tr class="bg-blue">
 												<th>No.</th>
 												<th>Nama</th>
+												<th>Jenis</th>
+												<th>no batch</th>
+												<th>Expired</th>
 												<th>Volume</th>
 												<th>Harga Satuan</th>
 												<th>Total + tuslah</th>
@@ -337,9 +340,19 @@ function pembulatan($total)
 											$nomer = 1;
 											$subtot = 0;
 											foreach ($data3 as $r3) {
+												$merk = isset($r3['merk']) ? $r3['merk'] : '';
+												$pabrikan = isset($r3['pabrikan']) ? $r3['pabrikan'] : '';
+												if ($merk != '') {
+													$merk_pabrikan = $merk;
+												} else {
+													$merk_pabrikan = $pabrikan;
+												}
 												echo "<tr>
 															<td>" . $nomer++ . "</td>
-															<td>" . $r3['nama'] . "</td>
+															<td>" . $r3['nama'] . " (" . $merk_pabrikan . ")</td>
+															<td>" . $r3['jenis'] . "</td>
+															<td>" . $r3['no_batch'] . "</td>
+															<td>" . $r3['expired'] . "</td>
 															<td>" . $r3['volume'] . "</td>
 															<td>" . $r3['harga_satuan'] . "</td>
 															<td>" . $r3['total_harga'] . "</td>
@@ -354,16 +367,16 @@ function pembulatan($total)
 										</tbody>
 										<tfoot>
 											<tr class="info">
-												<td colspan="4" class="text-right"><b>Total Transaksi</b></td>
-												<td colspan="2"><b>Rp.<?php echo number_format($subtot, 4, ',', '.'); ?></b></td>
+												<td colspan="7" class="text-right"><b>Total Transaksi</b></td>
+												<td colspan="2"><b>Rp.<?php echo number_format($subtot, 2, ',', '.'); ?></b></td>
 											</tr>
 											<tr class="warning">
-												<td colspan="4" class="text-right"><b>Pembulatan</b></td>
-												<td colspan="2"><b>Rp.(<?php echo number_format(pembulatan($subtot) - $subtot, 4, ',', '.'); ?>)</b></td>
+												<td colspan="7" class="text-right"><b>Pembulatan</b></td>
+												<td colspan="2"><b>Rp.(<?php echo number_format(pembulatan($subtot) - $subtot, 2, ',', '.'); ?>)</b></td>
 											</tr>
 											<tr class="success">
-												<td colspan="4" class="text-right"><b>Total yang harus dibayarkan</b></td>
-												<td colspan="2"><b>Rp.<?php echo number_format(pembulatan($subtot), 4, ',', '.'); ?></b></td>
+												<td colspan="7" class="text-right"><b>Total yang harus dibayarkan</b></td>
+												<td colspan="2"><b>Rp.<?php echo number_format(pembulatan($subtot), 2, ',', '.'); ?></b></td>
 											</tr>
 										</tfoot>
 									</table>

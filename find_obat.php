@@ -22,15 +22,19 @@ $crypt = isset($_GET['crypt']) ? base64_decode(trim($_GET['crypt'])) : 'false';
 if($crypt=="true"){
   $in_out='masuk';
   $key = $keysearch."%";
-  $get_data_depo = $db->prepare("SELECT ks.id_obat,ks.id_warehouse,SUM(ks.volume_kartu_akhir) as jumlah_akhir,w.nama_ruang,ks.sumber_dana,g.nama FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) INNER JOIN warehouse w ON(ks.id_warehouse=w.id_warehouse) WHERE g.nama LIKE :key AND in_out=:in_out GROUP BY id_obat,id_warehouse ASC");
+  $get_data_depo = $db->prepare("SELECT ks.id_obat,ks.id_warehouse,SUM(ks.volume_kartu_akhir) as jumlah_akhir,w.nama_ruang,ks.sumber_dana,g.nama FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) INNER JOIN warehouse w ON(ks.id_warehouse=w.id_warehouse) WHERE (g.nama LIKE :key OR ks.merk LIKE :merk OR ks.pabrikan LIKE :pabrikan) AND in_out=:in_out GROUP BY id_obat,id_warehouse ASC");
   $get_data_depo->bindParam(":key",$key,PDO::PARAM_STR);
+  $get_data_depo->bindParam(":merk",$keysearch,PDO::PARAM_STR);
+  $get_data_depo->bindParam(":pabrikan",$keysearch,PDO::PARAM_STR);
   $get_data_depo->bindParam(":in_out",$in_out,PDO::PARAM_STR);
   $get_data_depo->execute();
   $data_depo = $get_data_depo->fetchAll(PDO::FETCH_ASSOC);
   $total_data_depo = $get_data_depo->rowCount();
 
-  $get_stok_gudang = $db->prepare("SELECT kg.id_obat,kg.sumber_dana,SUM(kg.volume_kartu_akhir) as jumlah_akhir,g.nama FROM kartu_stok_gobat kg INNER JOIN gobat g ON(kg.id_obat=g.id_obat) WHERE g.nama LIKE :key AND kg.in_out=:in_out GROUP BY id_obat");
+  $get_stok_gudang = $db->prepare("SELECT kg.id_obat,kg.sumber_dana,SUM(kg.volume_kartu_akhir) as jumlah_akhir,g.nama FROM kartu_stok_gobat kg INNER JOIN gobat g ON(kg.id_obat=g.id_obat) WHERE (g.nama LIKE :key OR kg.merk=:merk OR kg.pabrikan=:pabrikan) AND kg.in_out=:in_out GROUP BY id_obat");
   $get_stok_gudang->bindParam(":key",$key,PDO::PARAM_STR);
+  $get_stok_gudang->bindParam(":merk",$keysearch,PDO::PARAM_STR);
+  $get_stok_gudang->bindParam(":pabrikan",$keysearch,PDO::PARAM_STR);
   $get_stok_gudang->bindParam(":in_out",$in_out,PDO::PARAM_STR);
   $get_stok_gudang->execute();
   $data_gudang = $get_stok_gudang->fetchAll(PDO::FETCH_ASSOC);

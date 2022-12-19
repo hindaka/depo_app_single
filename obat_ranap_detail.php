@@ -197,7 +197,7 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                           } else if ($o['jenis'] == 'non generik') {
                             $text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
                           } else {
-                            $text_nama = "(Single ID) " . $o['nama']." ".$o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+                            $text_nama = "(Single ID) " . $o['nama'] . " (" . $o['volume_kartu_akhir'] . ") | " . $o['no_batch'];
                           }
                         } else {
                           $text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
@@ -267,7 +267,7 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                       <th>Tanggal Input</th>
                       <th>Nama</th>
                       <th>Jenis</th>
-                      <th>Merk</th>
+                      <th>Merk/Pabrikan</th>
                       <th>No Batch</th>
                       <th>Expired</th>
                       <th>Volume</th>
@@ -304,17 +304,24 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                           $list_block = "";
                         }
                       }
+                      $merk  = isset($r['merk']) ? $r['merk'] : '';
+                      $pabrikan  = isset($r['pabrikan']) ? $r['pabrikan'] : '';
+                      if ($merk != '') {
+                        $merk_pabrikan = $merk;
+                      } else {
+                        $merk_pabrikan = $pabrikan;
+                      }
                       echo "<tr>
                                 <td>" . $nomor . "</td>
 																<td>" . $code . "</td>
                                 <td>" . $new_data . "</td>
                                 <td>" . $r['nama'] . "</td>
                                 <td>" . $r['jenis'] . "</td>
-                                <td>" . $r['merk'] . "</td>
+                                <td>" . $merk_pabrikan . "</td>
                                 <td>" . $r['no_batch'] . "</td>
 																<td>" . $r['expired'] . "</td>
                                 <td>" . $r['volume'] . "</td>
-                                <td style='text-align:right'>" . number_format($r['sub_total'], 4, ',', '.') . "</td>
+                                <td style='text-align:right'>" . number_format($r['sub_total'], 2, ',', '.') . "</td>
                                 <td>
 																	<div class=\"btn-group\">
 																		<button type=\"button\" class=\"btn btn-sm dropdown-toggle\" data-toggle=\"dropdown\" aria-haspopup=\"true\" aria-expanded=\"false\">
@@ -333,7 +340,7 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                   <tfoot>
                     <tr>
                       <th colspan="8" style='text-align:right'>Total Biaya transaksi</th>
-                      <td colspan="2" style="text-align:right"><b>Rp.<?php echo number_format($total_biaya, 4, ',', '.'); ?></b></td>
+                      <td colspan="2" style="text-align:right"><b>Rp.<?php echo number_format($total_biaya, 2, ',', '.'); ?></b></td>
                       <td>&nbsp;</td>
                     </tr>
                   </tfoot>

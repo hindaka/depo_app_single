@@ -79,7 +79,7 @@ $cetak = date('d F Y H:i:s');
     </style>
   </head>
   <?php echo $body; ?>
-    <div style="font-size:12px;text-align:center;"><b>INSTALASI FARMASI RSKIA KOTA BANDUNG</b></div>
+    <div style="font-size:12px;text-align:center;"><b>INSTALASI FARMASI RSUD BANDUNG KIWARI</b></div>
     <table id="head_kop" border="0" width="100%">
       <tr>
         <td width="15%">NAMA PASIEN</td>

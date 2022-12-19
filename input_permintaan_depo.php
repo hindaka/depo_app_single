@@ -27,12 +27,12 @@ $h3->bindParam(":id", $id_parent, PDO::PARAM_INT);
 $h3->execute();
 $parent = $h3->fetch(PDO::FETCH_ASSOC);
 //rincian obat keluar
-$list_obat_keluar = $db->prepare("SELECT ob.*,k.harga_beli,k.sumber_dana,k.merk FROM barangkeluar_depo_det ob INNER JOIN kartu_stok_ruangan k ON(k.id_kartu_ruangan=ob.id_kartu) WHERE ob.id_barangkeluar_depo=:id");
+$list_obat_keluar = $db->prepare("SELECT ob.*,k.harga_beli,k.sumber_dana,k.merk,k.pabrikan,k.jenis FROM barangkeluar_depo_det ob INNER JOIN kartu_stok_ruangan k ON(k.id_kartu_ruangan=ob.id_kartu) WHERE ob.id_barangkeluar_depo=:id");
 $list_obat_keluar->bindParam(":id", $id_parent, PDO::PARAM_INT);
 $list_obat_keluar->execute();
 $data3 = $list_obat_keluar->fetchAll(PDO::FETCH_ASSOC);
 $total_rincian = $list_obat_keluar->rowCount();
-$h4 = $db->query("SELECT k.id_kartu_ruangan,k.id_obat,g.nama,k.sumber_dana,k.merk,k.volume_kartu_akhir as volume,k.harga_beli FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.volume_kartu_akhir>0 AND k.in_out='masuk' AND g.flag_single_id='new'");
+$h4 = $db->query("SELECT k.id_kartu_ruangan,k.id_obat,g.flag_single_id,g.nama,k.sumber_dana,k.jenis,k.merk,k.pabrikan,k.no_batch,k.expired,k.volume_kartu_akhir as volume,k.harga_beli FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.volume_kartu_akhir>0 AND k.in_out='masuk'");
 $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
@@ -151,9 +151,19 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 										<select class="form-control selectpicker" data-live-search="true" name="id_obat" required>
 											<option value="">Pilih Obat</option>
 											<?php
-											foreach ($data4 as $r4) {
-												$namaobat = $r4["nama"];
-												echo "<option value='".$r4['id_kartu_ruangan']."|" . $r4['id_obat'] . "'>" . $namaobat . "(".$r4['merk'].") - " . $r4['volume'] . " - " . $r4['sumber_dana'] . " | Rp.".$r4['harga_beli']."</option>";
+											foreach ($data4 as $o) {
+												if ($o['flag_single_id'] == 'new') {
+													if ($o['jenis'] == 'generik') {
+														$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['pabrikan'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+													} else if ($o['jenis'] == 'non generik') {
+														$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+													} else {
+														$text_nama = "(Single ID) " . $o['nama'] . " | " . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+													}
+												} else {
+													$text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
+												}
+												echo "<option value='" . $o['id_kartu_ruangan'] . "|" . $o['id_obat'] . "|" . $o['volume_kartu_akhir'] . "|" . $o['id_warehouse'] . "'>" . $text_nama . "</option>";
 											}
 											?>
 										</select>
@@ -185,7 +195,7 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 										<thead>
 											<tr class="info">
 												<th>Nama</th>
-												<th>Merk</th>
+												<th>jenis</th>
 												<th>Sumber</th>
 												<th>Volume</th>
 												<th>Harga Satuan</th>
@@ -197,12 +207,19 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 										<?php
 										foreach ($data3 as $r3) {
 											$volumeformat = number_format($r3['volume'], 0, ".", ".");
+											$merk = isset($r3['merk']) ? $r3['merk'] : '';
+											$pabrikan = isset($r3['pabrikan']) ? $r3['pabrikan'] : '';
+											if ($merk != '') {
+												$merk_pabrikan = $merk;
+											} else {
+												$merk_pabrikan = $pabrikan;
+											}
 											echo "<tr>
-															<td>" . $r3['namabarang'] . "</td>
-															<td>" . $r3['merk'] . "</td>
+															<td>" . $r3['namabarang'] . "(" . $merk_pabrikan . ")</td>
+															<td>" . $r3['jenis'] . "</td>
 															<td>" . $r3['sumber_dana'] . "</td>
 															<td>" . $volumeformat . "</td>
-															<td>" . number_format($r3['harga_beli'], 4, ',', '.') . "</td>
+															<td>" . number_format($r3['harga_beli'], 2, ',', '.') . "</td>
 															<td>" . $r3['no_batch'] . "</td>
 															<td>" . $r3['expired_date'] . "</td>
 															<td><a class='btn btn-sm btn-danger' href='hapus_permintaan_keluar.php?parent=" . $id_parent . "&id=" . $r3['id_barangkeluar_depo_det'] . "&kartu=" . $r3['id_kartu'] . "&type=" . $tipe . "'><i class='fa fa-trash'></i> Hapus</a></td>
