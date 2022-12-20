@@ -151,7 +151,7 @@ $kartu = $kartu_list->fetchAll(PDO::FETCH_ASSOC);
                       }else if($row['sumber_dana']=='BLUD'){
                         $sd ='<span class="label bg-primary">BLUD</span>';
                       }else{
-
+                        $sd ='<span class="label bg-danger">'.$row['sumber_dana'].'</span>';
                       }
                       echo "<tr class='" . $bgcolor . "'>
                               <td>" . $row['created_at'] . "</td>
@@ -165,9 +165,9 @@ $kartu = $kartu_list->fetchAll(PDO::FETCH_ASSOC);
                               <td>" . $row['merk'] . "</td>
                               <td>" . $row['jenis'] . "</td>
                               <td>" . $row['pabrikan'] . "</td>
-                              <td>Rp " . number_format($row['harga_beli'], 4, ',', '.') . "</td>
-                              <td>Rp " . number_format($harga_jual, 4, ',', '.') . "</td>
-                              <td>Rp " . number_format($total_penjualan, 4, ',', '.') . "</td>
+                              <td>Rp " . number_format($row['harga_beli'], 0, ',', '.') . "</td>
+                              <td>Rp " . number_format($harga_jual, 0, ',', '.') . "</td>
+                              <td>Rp " . number_format($total_penjualan, 0, ',', '.') . "</td>
                               <td>" . $row['keterangan'] . "</td>
                             </tr>";
                     }

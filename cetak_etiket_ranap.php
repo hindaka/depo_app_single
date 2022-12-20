@@ -47,7 +47,7 @@ $hariini2 = date('d/m/Y');
 echo "<html>
 <head>
 <link rel=\"stylesheet\" type=\"text/css\" href=\"cetak.css\" />
-<body onload=\"loadPrint()\"><center>INSTALASI FARMASI<br />RSKIA KOTA BANDUNG<hr></center>
+<body onload=\"loadPrint()\"><center>INSTALASI FARMASI<br />RSUD BANDUNG KIWARI<hr></center>
 No. RM: ".$items['nomedrek']." &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TGL: ".$hariini."<br><center>".$items['nama_pasien']." (".$items['tanggallahir'].")</center><br>
 <center><font size='2'>Sehari ".$sehari." ".$takaran." ".$minum."</font><br><br></center>
 Nama Obat: ".$items['nama_obat']."<br>Jumlah: ".$items['volume']."<br>Petunjuk Khusus: ".$petunjuk."<br>ED: ".$edate."

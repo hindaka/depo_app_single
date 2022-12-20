@@ -29,11 +29,19 @@ $etiket_q = $db->query("SELECT * FROM etiket_apotek WHERE id_detail_rincian='" .
 $etiket = $etiket_q->fetch(PDO::FETCH_ASSOC);
 $total_etiket = $etiket_q->rowCount();
 if ($total_etiket > 0) {
-  $expire_date = $etiket['expired_date'];
-  $no_batch = $etiket['no_batch'];
+  $expire_date = isset($etiket['expired_date']) ? $etiket['expired_date'] : '';
+  $no_batch = isset($etiket['no_batch']) ? $etiket['no_batch'] : '';
+  $sehari_x = isset($etiket['sehari_x']) ? $etiket['sehari_x'] : '';
+  $takaran = isset($etiket['takaran']) ? $etiket['takaran'] : '';
+  $diminum = isset($etiket['diminum']) ? $etiket['diminum'] : '';
+  $petunjuk_khusus = isset($etiket['petunjuk_khusus']) ? $etiket['petunjuk_khusus'] : '';
 } else {
-  $expire_date = $obat['expired'];
-  $no_batch = $obat['no_batch'];
+  $expire_date = isset($obat['expired']) ? $obat['expired'] : '';
+  $no_batch = isset($obat['no_batch']) ? $obat['no_batch'] : '';
+  $sehari_x = isset($obat['sehari_x']) ? $obat['sehari_x'] : '';
+  $takaran = isset($obat['takaran']) ? $obat['takaran'] : '';
+  $diminum = isset($obat['diminum']) ? $obat['diminum'] : '';
+  $petunjuk_khusus = isset($obat['petunjuk_khusus']) ? $obat['petunjuk_khusus'] : '';
 }
 ?>
 <!DOCTYPE html>
@@ -125,19 +133,19 @@ if ($total_etiket > 0) {
               <div class="row">
                 <div class="col-xs-2">
                   <label for="sehari">Sehari X</label>
-                  <input type="text" class="form-control" id="sehari" name="sehari" placeholder="misal 3 X 1" value="<?php echo $etiket['sehari_x']; ?>" required>
+                  <input type="text" class="form-control" id="sehari" name="sehari" placeholder="misal 3 X 1" value="<?php echo $sehari_x; ?>" required>
                 </div>
                 <div class="col-xs-2">
                   <label for="takaran">Takaran</label>
-                  <input type="text" class="form-control" id="takaran" name="takaran" value="<?php echo $etiket['takaran']; ?>" required>
+                  <input type="text" class="form-control" id="takaran" name="takaran" value="<?php echo $takaran; ?>" required>
                 </div>
                 <div class="col-xs-2">
                   <label for="minum">Diminum</label>
-                  <input type="text" class="form-control" id="minum" name="minum" value="<?php echo $etiket['diminum']; ?>" required>
+                  <input type="text" class="form-control" id="minum" name="minum" value="<?php echo $diminum; ?>" required>
                 </div>
                 <div class="col-xs-5">
                   <label for="petunjuk">Petunjuk Khusus</label>
-                  <input type="text" class="form-control" id="petunjuk" name="petunjuk" value="<?php echo $etiket['petunjuk_khusus']; ?>" required>
+                  <input type="text" class="form-control" id="petunjuk" name="petunjuk" value="<?php echo $petunjuk_khusus; ?>" required>
                 </div>
                 <div class="col-xs-2">
                   <label for="ed">ED</label>

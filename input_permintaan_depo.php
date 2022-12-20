@@ -32,7 +32,7 @@ $list_obat_keluar->bindParam(":id", $id_parent, PDO::PARAM_INT);
 $list_obat_keluar->execute();
 $data3 = $list_obat_keluar->fetchAll(PDO::FETCH_ASSOC);
 $total_rincian = $list_obat_keluar->rowCount();
-$h4 = $db->query("SELECT k.id_kartu_ruangan,k.id_obat,g.flag_single_id,g.nama,k.sumber_dana,k.jenis,k.merk,k.pabrikan,k.no_batch,k.expired,k.volume_kartu_akhir as volume,k.harga_beli FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.volume_kartu_akhir>0 AND k.in_out='masuk'");
+$h4 = $db->query("SELECT k.id_kartu_ruangan,k.id_obat,g.flag_single_id,g.nama,k.sumber_dana,k.jenis,k.merk,k.pabrikan,k.no_batch,k.expired,k.volume_kartu_akhir,k.harga_beli FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.volume_kartu_akhir>0 AND k.in_out='masuk'");
 $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
