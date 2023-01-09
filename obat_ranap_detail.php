@@ -41,8 +41,8 @@ $e_rincian = $db->query($sql_rincian);
 //   $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0  AND g.flag_single_id='new'");
 //   // $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama,g.sumber FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.nama_ruang='Farmasi' AND g.fornas_app='ya'");
 // }
-$list_obat = $db->query("SELECT k.*,g.nama,g.flag_single_id FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.in_out='masuk' AND k.volume_kartu_akhir>0");
-$obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
+// $list_obat = $db->query("SELECT k.*,g.nama,g.flag_single_id FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.in_out='masuk' AND k.volume_kartu_akhir>0");
+// $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
 //function pembulatan 50 -> 100
 // function pembulatan($rupiah){
 // 	$puluhan = substr($rupiah,-2);
@@ -73,6 +73,7 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
   <link href="../plugins/datepicker/datepicker3.css" rel="stylesheet" type="text/css" />
   <!-- BootsrapSelect -->
   <link href="../plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
+  <link rel="stylesheet" href="../plugins/select2/select2.min.css">
   <!-- iCheck for checkboxes and radio inputs -->
   <link href="../plugins/iCheck/all.css" rel="stylesheet" type="text/css" />
   <!-- DATA TABLES -->
@@ -167,7 +168,7 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                 <h3 class="box-title">Data Pasien & Obat</h3>
               </div><!-- /.box-header -->
               <!-- form start -->
-              <form role="form" action="save_detail_ranap.php?id=<?php echo $id_rincian; ?>&t=<?php echo $id_transaksi; ?>&task=item_added" method="post">
+              <form role="form" action="save_detail_ranap.php?id=<?php echo $id_rincian; ?>&t=<?php echo $id_transaksi; ?>&r=<?php echo $setRuang; ?>&task=item_added" method="post">
                 <div class="box-body">
                   <div class="form-group">
                     <label for="id_transaksi">ID Transaksi</label>
@@ -186,27 +187,33 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
                     <input type="text" class="form-control" name="ruang" value="<?php echo $setRuang; ?>" readonly>
                   </div>
                   <div class="form-group">
+                    <label for="namaobat">Nama obat <span style="color:red">*</span></label>
+                    <select class="form-control select_obat" name="namaobat" id="namaobat" style="width:100%;" required>
+                      <option value=""></option>
+                    </select>
+                  </div>
+                  <!-- <div class="form-group">
                     <label for="namaobat">Nama Obat <span style="color:red">*</span></label>
                     <select class="form-control selectpicker" data-live-search="true" name="namaobat" id="namaobat" required>
                       <option value="">---Pilih Obat---</option>
                       <?php
-                      foreach ($obat_l as $o) {
-                        if ($o['flag_single_id'] == 'new') {
-                          if ($o['jenis'] == 'generik') {
-                            $text_nama = "(Single ID) " . $o['nama'] . "(" . $o['pabrikan'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
-                          } else if ($o['jenis'] == 'non generik') {
-                            $text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
-                          } else {
-                            $text_nama = "(Single ID) " . $o['nama'] . " (" . $o['volume_kartu_akhir'] . ") | " . $o['no_batch'];
-                          }
-                        } else {
-                          $text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
-                        }
-                        echo "<option value='" . $o['id_kartu_ruangan'] . "|" . $o['id_obat'] . "|" . $o['volume_kartu_akhir'] . "|" . $o['id_warehouse'] . "'>" . $text_nama . "</option>";
-                      }
+                      // foreach ($obat_l as $o) {
+                      //   if ($o['flag_single_id'] == 'new') {
+                      //     if ($o['jenis'] == 'generik') {
+                      //       $text_nama = "(Single ID) " . $o['nama'] . "(" . $o['pabrikan'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+                      //     } else if ($o['jenis'] == 'non generik') {
+                      //       $text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+                      //     } else {
+                      //       $text_nama = "(Single ID) " . $o['nama'] . " (" . $o['volume_kartu_akhir'] . ") | " . $o['no_batch'];
+                      //     }
+                      //   } else {
+                      //     $text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
+                      //   }
+                      //   echo "<option value='" . $o['id_kartu_ruangan'] . "|" . $o['id_obat'] . "|" . $o['volume_kartu_akhir'] . "|" . $o['id_warehouse'] . "'>" . $text_nama . "</option>";
+                      // }
                       ?>
                     </select>
-                  </div>
+                  </div> -->
                   <div class="form-group">
                     <label for="volume">Volume <span style="color:red">*</span></label>
                     <input type="number" class="form-control" id="volume" name="volume" placeholder="Volume" min="1" autocomplete="off" required>
@@ -373,6 +380,8 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
   <script src="../plugins/datatables/dataTables.bootstrap.js" type="text/javascript"></script>
   <!-- SlimScroll -->
   <script src="../plugins/slimScroll/jquery.slimscroll.min.js" type="text/javascript"></script>
+  <script src="../plugins/bootstrap-select/bootstrap-select.min.js" type="text/javascript"></script>
+  <script src="../plugins/select2/select2.full.min.js" type="text/javascript"></script>
   <!-- typeahead -->
   <script src="../plugins/typeahead/typeahead.bundle.js" type="text/javascript"></script>
   <!-- iCheck 1.0.1 -->
@@ -391,6 +400,81 @@ $obat_l = $list_obat->fetchAll(PDO::FETCH_ASSOC);
       $("#example1").DataTable({
         "pageLength": 25
       });
+      $(".select_obat").select2({
+        ajax: {
+          url: "ajax_data/get_obat_keluar.php",
+          dataType: 'json',
+          delay: 200,
+          data: function(params) {
+            return {
+              q: params.term, // search term
+              page: params.page
+            };
+          },
+          processResults: function(data, params) {
+            console.log(data);
+            // parse the results into the format expected by Select2
+            // since we are using custom formatting functions we do not need to
+            // alter the remote JSON data, except to indicate that infinite
+            // scrolling can be used
+            params.page = params.page || 1;
+
+            return {
+              results: data.items,
+              pagination: {
+                more: (params.page * 30) < data.total_count
+              }
+            };
+          },
+          cache: true
+        },
+        placeholder: 'Pilih Obat',
+        allowClear: true,
+        minimumInputLength: 1,
+        templateResult: formatRepo,
+        templateSelection: formatRepoSelection
+      });
+
+      function formatRepo(repo) {
+        if (repo.loading) {
+          return repo.text;
+        }
+        let text_name = '';
+        if (repo.jenis == 'generik') {
+          text_name += repo.nama_obat + " (<b style='color:blue'>" + repo.merk_pabrik + "</b>)| stok: " + repo.volume_kartu_akhir;
+        } else if (repo.jenis == 'non generik') {
+          text_name += repo.nama_obat + " (<b style='color:green'>" + repo.merk_pabrik + "</b>)| stok: " + repo.volume_kartu_akhir;
+        } else if (repo.jenis == 'bmhp') {
+          text_name += repo.nama_obat + " (<b style='color:blue'>" + repo.merk_pabrik + "</b>)| stok: " + repo.volume_kartu_akhir;
+        } else {
+          text_name += repo.nama_obat + " | stok : " + repo.volume_kartu_akhir;
+        }
+        var $container = $(
+          "<div class='select2-result-obat clearfix'>" +
+          "<div class='select2-result-obat__namaobat'>" + text_name + "</div>" +
+          "</div>"
+        );
+
+        return $container;
+      }
+
+      function formatRepoSelection(repo) {
+        let text_name = '';
+        if (repo.id == '') {
+          text_name = repo.text;
+        } else {
+          if (repo.jenis == 'generik') {
+            text_name += repo.nama_obat + " (" + repo.merk_pabrik + ")| stok: " + repo.volume_kartu_akhir;
+          } else if (repo.jenis == 'non generik') {
+            text_name += repo.nama_obat + " (" + repo.merk_pabrik + ")| stok: " + repo.volume_kartu_akhir;
+          } else if (repo.jenis == 'bmhp') {
+            text_name += repo.nama_obat + " (" + repo.merk_pabrik + ")| stok: " + repo.volume_kartu_akhir;
+          } else {
+            text_name += repo.nama_obat + " | stok : " + repo.volume_kartu_akhir;
+          }
+        }
+        return text_name;
+      }
 
       function my_alert(url_link) {
         var link = url_link;

@@ -187,11 +187,10 @@ $total_tpn = $get_total_tpn->fetch(PDO::FETCH_ASSOC);
 																if ($nama_depo == 'Depo Farmasi IGD') {
 																	echo '<option value="">Pilih Ruangan</option>
 															<option value="IGD">IGD</option>';
-																}else if($nama_depo = 'Depo Farmasi OK'){
+																} else if ($nama_depo = 'Depo Farmasi OK') {
 																	echo '<option value="">Pilih Ruangan</option>
 															<option value="OK">OK</option>';
-																}else{
-
+																} else {
 																}
 																?>
 																<!-- <option value="ICU">ICU (LANTAI 4)</option>
@@ -353,17 +352,17 @@ $total_tpn = $get_total_tpn->fetch(PDO::FETCH_ASSOC);
 													$hapus_button = "";
 												}
 												echo "<tr>
-                                <td>" . $no++ . "</td>
-																<td>" . $code . "</td>
-                                <td>" . $new_date . "</td>
-																<td>" . $data['ruang'] . "</td>
-																<td>" . $data['nama_ruang'] . "</td>
-                                <td>Rp." . number_format($data['biaya_trans'], 0, ',', '.') . "</td>
-                                <td>" . $hapus_button . "
-                                  <a href='obat_ranap_detail.php?id=" . $id_rincian . "&t=" . $data['id_trans_obat'] . "&r=" . $data['ruang'] . "&task=detail' class='btn btn-block btn-xs btn-info'><i class=\"fa fa-search\"></i> Detail</a>
-																	<a href='cetak_bukti_transaksi.php?id=" . $id_rincian . "&t=" . $data['id_trans_obat'] . "&r=" . $data['ruang'] . "' class='btn btn-block btn-warning btn-xs' target='_blank'><i class=\"fa fa-print\"></i>Cetak</a>
-                                </td>
-                            </tr>";
+														<td>" . $no++ . "</td>
+														<td>" . $code . "</td>
+														<td>" . $new_date . "</td>
+														<td>" . $data['ruang'] . "</td>
+														<td>" . $data['nama_ruang'] . "</td>
+														<td>Rp." . number_format($data['biaya_trans'], 0, ',', '.') . "</td>
+														<td>" . $hapus_button . "
+														<a href='obat_ranap_detail.php?id=" . $id_rincian . "&t=" . $data['id_trans_obat'] . "&r=" . $data['ruang'] . "&task=detail' class='btn btn-block btn-xs btn-info'><i class=\"fa fa-search\"></i> Detail</a>
+																							<a href='cetak_bukti_transaksi.php?id=" . $id_rincian . "&t=" . $data['id_trans_obat'] . "&r=" . $data['ruang'] . "' class='btn btn-block btn-warning btn-xs' target='_blank'><i class=\"fa fa-print\"></i>Cetak</a>
+														</td>
+													</tr>";
 											}
 											// <a href='obat_ranap_retur.php?id=".$id_rincian."&t=".$data['id_trans_obat']."&task=retur' class='btn btn-sm btn-warning'>Retur</a>
 											$ratusan = substr($total_biaya, -3);
@@ -447,17 +446,17 @@ $total_tpn = $get_total_tpn->fetch(PDO::FETCH_ASSOC);
 													$hapus = "";
 												}
 												echo "<tr>
-	                                <td>" . $no++ . "</td>
-	                                <td>" . $ret_date . "</td>
-																	<td>" . $ret['ruangan'] . "</td>
-																	<td>" . $ret['petugas_retur'] . "</td>
-																	<td>Rp " . number_format($ret['total_retur'], 0, ',', '.') . "</td>
-																	<td>
-																		<button type=\"button\" class=\"btn btn-block btn-info btn-xs\" id=\"myBtn\" data-id=\"" . $ret['id_parent_retur'] . "\" data-nama=\"Data Retur Ruangan " . $ret['ruangan'] . "\" data-toggle=\"modal\" data-backdrop=\"static\" data-target=\"#myDokumen\"><i class=\"fa fa-search\"></i> Lihat</button>
-																		<a href='cetak_bukti_retur.php?id=" . $ret['id_parent_retur'] . "' class='btn btn-block btn-warning btn-xs' target='_blank'><i class=\"fa fa-print\"></i>Cetak</a>
-																		" . $hapus . "
-																	</td>
-	                            </tr>";
+														<td>" . $no++ . "</td>
+														<td>" . $ret_date . "</td>
+														<td>" . $ret['ruangan'] . "</td>
+														<td>" . $ret['petugas_retur'] . "</td>
+														<td>Rp " . number_format($ret['total_retur'], 0, ',', '.') . "</td>
+														<td>
+															<button type=\"button\" class=\"btn btn-block btn-info btn-xs\" id=\"myBtn\" data-id=\"" . $ret['id_parent_retur'] . "\" data-nama=\"Data Retur Ruangan " . $ret['ruangan'] . "\" data-toggle=\"modal\" data-backdrop=\"static\" data-target=\"#myDokumen\"><i class=\"fa fa-search\"></i> Lihat</button>
+															<a href='cetak_bukti_retur.php?id=" . $ret['id_parent_retur'] . "' class='btn btn-block btn-warning btn-xs' target='_blank'><i class=\"fa fa-print\"></i>Cetak</a>
+															" . $hapus . "
+														</td>
+													</tr>";
 											}
 											?>
 										</tbody>
@@ -533,6 +532,8 @@ $total_tpn = $get_total_tpn->fetch(PDO::FETCH_ASSOC);
 											<th>No</th>
 											<th>Tanggal Input</th>
 											<th>Nama Obat/BMHP</th>
+											<th>Jenis</th>
+											<th>Merk/Pabrikan</th>
 											<th>Jumlah Retur</th>
 											<th>Total Harga</th>
 											<th>Petugas Farmasi</th>
@@ -584,7 +585,7 @@ $total_tpn = $get_total_tpn->fetch(PDO::FETCH_ASSOC);
 		$(document).ready(function() {
 			function format1(n, currency) {
 				return currency + n.toFixed(2).replace(/./g, function(c, i, a) {
-					return i > 0 && c !== "." && (a.length - i) % 3 === 0 ? "," + c : c;
+					return i > 0 && c !== "," && (a.length - i) % 3 === 0 ? "." + c : c;
 				});
 			}
 			$('#btnHapusRetur').on("click", function() {
@@ -606,7 +607,7 @@ $total_tpn = $get_total_tpn->fetch(PDO::FETCH_ASSOC);
 					url: 'ajax_data/data_list_retur.php?p=' + recipient,
 					dataType: 'JSON',
 					success: function(response) {
-						// console.log(response.data);
+						console.log(response.data);
 						var data = response.data;
 
 						//clear the table to remove cloned rows
@@ -622,13 +623,15 @@ $total_tpn = $get_total_tpn->fetch(PDO::FETCH_ASSOC);
 							var id_button = 'btnEdit' + i;
 							var loop = i + 1;
 							var total_harga = item.jumlah_retur * item.harga_jual;
-							// console.log(item);
 							tabel_dokumen.row.add([
 								loop,
 								item.created_at,
 								item.nama_obat,
+								item.jenis,
+								item.merk_pabrikan,
 								item.jumlah_retur,
-								format1(total_harga, 'Rp'),
+								// format1(total_harga, 'Rp'),
+								total_harga,
 								item.nama_petugas,
 							]).draw();
 						});

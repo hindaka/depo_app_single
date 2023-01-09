@@ -32,8 +32,8 @@ $list_obat_keluar->bindParam(":id", $id_parent, PDO::PARAM_INT);
 $list_obat_keluar->execute();
 $data3 = $list_obat_keluar->fetchAll(PDO::FETCH_ASSOC);
 $total_rincian = $list_obat_keluar->rowCount();
-$h4 = $db->query("SELECT k.id_kartu_ruangan,k.id_obat,g.flag_single_id,g.nama,k.sumber_dana,k.jenis,k.merk,k.pabrikan,k.no_batch,k.expired,k.volume_kartu_akhir,k.harga_beli FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.volume_kartu_akhir>0 AND k.in_out='masuk'");
-$data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
+// $h4 = $db->query("SELECT k.id_kartu_ruangan,k.id_obat,g.flag_single_id,g.nama,k.sumber_dana,k.jenis,k.merk,k.pabrikan,k.no_batch,k.expired,k.volume_kartu_akhir,k.harga_beli FROM kartu_stok_ruangan k INNER JOIN gobat g ON(k.id_obat=g.id_obat) WHERE k.id_warehouse='" . $id_depo . "' AND k.volume_kartu_akhir>0 AND k.in_out='masuk'");
+// $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 ?>
 <!DOCTYPE html>
 <html>
@@ -53,7 +53,8 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 	<!-- DATA TABLES -->
 	<link href="../plugins/datatables/dataTables.bootstrap.css" rel="stylesheet" type="text/css" />
 	<!-- BootsrapSelect -->
-	<link href="../plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" />
+	<!-- <link href="../plugins/bootstrap-select/bootstrap-select.min.css" rel="stylesheet" type="text/css" /> -->
+	<link rel="stylesheet" href="../plugins/select2/select2.min.css">
 	<!-- Theme style -->
 	<link href="../dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
 	<!-- AdminLTE Skins. Choose a skin from the css/skins
@@ -148,26 +149,32 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 						</div> -->
 									<div class="form-group">
 										<label for="namaobat">Nama obat <span style="color:red">*</span></label>
+										<select class="form-control select_obat" name="namaobat" id="namaobat" style="width:100%;" required>
+											<option value=""></option>
+										</select>
+									</div>
+									<!-- <div class="form-group">
+										<label for="namaobat">Nama obat <span style="color:red">*</span></label>
 										<select class="form-control selectpicker" data-live-search="true" name="id_obat" required>
 											<option value="">Pilih Obat</option>
 											<?php
-											foreach ($data4 as $o) {
-												if ($o['flag_single_id'] == 'new') {
-													if ($o['jenis'] == 'generik') {
-														$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['pabrikan'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
-													} else if ($o['jenis'] == 'non generik') {
-														$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
-													} else {
-														$text_nama = "(Single ID) " . $o['nama'] . " | " . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
-													}
-												} else {
-													$text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
-												}
-												echo "<option value='" . $o['id_kartu_ruangan'] . "|" . $o['id_obat'] . "|" . $o['volume_kartu_akhir'] . "|" . $o['id_warehouse'] . "'>" . $text_nama . "</option>";
-											}
+											// foreach ($data4 as $o) {
+											// 	if ($o['flag_single_id'] == 'new') {
+											// 		if ($o['jenis'] == 'generik') {
+											// 			$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['pabrikan'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+											// 		} else if ($o['jenis'] == 'non generik') {
+											// 			$text_nama = "(Single ID) " . $o['nama'] . "(" . $o['merk'] . ")" . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+											// 		} else {
+											// 			$text_nama = "(Single ID) " . $o['nama'] . " | " . $o['volume_kartu_akhir'] . " | " . $o['no_batch'];
+											// 		}
+											// 	} else {
+											// 		$text_nama = $o['nama'] . " (" . $o['volume_kartu_akhir'] . ")";
+											// 	}
+											// 	echo "<option value='" . $o['id_kartu_ruangan'] . "|" . $o['id_obat'] . "|" . $o['volume_kartu_akhir'] . "|" . $o['id_warehouse'] . "'>" . $text_nama . "</option>";
+											// }
 											?>
 										</select>
-									</div>
+									</div> -->
 									<div class="form-group">
 										<label for="volume">Volume <span style="color:red">*</span></label>
 										<input type="text" class="form-control" id="volume" name="volume" placeholder="Volume" autocomplete="off" required>
@@ -232,11 +239,11 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 							<div class="box-footer">
 								<?php
 								if ($total_rincian > 0) {
-									echo "<a class=\"btn btn-app bg-blue\" href=\"save_permintaan_keluar.php?parent=" . $id_parent . "&mode=draft\"><i class=\"fa fa-save\"></i> Draft</a>";
-									echo "<a class=\"btn btn-app bg-green\" href=\"save_permintaan_keluar.php?parent=" . $id_parent . "&mode=save\"><i class=\"fa fa-save\"></i> Simpan</a>";
+									echo "<a class=\"btn btn-app bg-blue\" onclick=\"saveData(" . $id_parent . ",'draft')\"><i class=\"fa fa-save\"></i> Draft</a>";
+									echo "<a id='saveBtn' class=\"btn btn-app bg-green\" onclick=\"saveData(" . $id_parent . ",'save')\"><i class=\"fa fa-save\"></i> Simpan</a>";
 									// echo "<a class=\"btn btn-app\" href=\"cancel_keluar.php?parent=".$id_parent."\"><i class=\"fa fa-trash\"></i> Batal</a>";
 								} else {
-									echo "<a class=\"btn btn-app bg-blue\" href=\"save_permintaan_keluar.php?parent=" . $id_parent . "&mode=draft\"><i class=\"fa fa-save\"></i> Draft</a>";
+									echo "<a class=\"btn btn-app bg-blue\" onclick=\"saveData(" . $id_parent . ",'draft')\"><i class=\"fa fa-save\"></i> Draft</a>";
 									echo "<a class=\"btn btn-app bg-red\" href=\"cancel_permintaan_keluar.php?parent=" . $id_parent . "\"><i class=\"fa fa-trash\"></i> Batalkan</a>";
 								}
 								?>
@@ -264,6 +271,7 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 	<script src="../plugins/datepicker/bootstrap-datepicker.js" type="text/javascript"></script>
 	<!-- BootsrapSelect -->
 	<script src="../plugins/bootstrap-select/bootstrap-select.min.js" type="text/javascript"></script>
+	<script src="../plugins/select2/select2.full.min.js" type="text/javascript"></script>
 	<!-- typeahead -->
 	<script src="../plugins/typeahead/typeahead.bundle.js" type="text/javascript"></script>
 	<!-- FastClick -->
@@ -272,8 +280,93 @@ $data4 = $h4->fetchAll(PDO::FETCH_ASSOC);
 	<script src="../dist/js/app.min.js" type="text/javascript"></script>
 	<!-- page script -->
 	<script type="text/javascript">
+		function saveData(id, mode) {
+			var uri_save = "save_permintaan_keluar.php?parent=" + id + "&mode=save";
+			var uri_draft = "save_permintaan_keluar.php?parent=" + id + "&mode=draft";
+			if (mode == 'save') {
+				$('#saveBtn').addClass('disabled');
+				window.location = uri_save;
+			} else {
+				window.location = uri_draft;
+			}
+		}
 		$(function() {
 			$("#example1").dataTable();
+			$(".select_obat").select2({
+				ajax: {
+					url: "ajax_data/get_obat_keluar.php",
+					dataType: 'json',
+					delay: 250,
+					data: function(params) {
+						return {
+							q: params.term, // search term
+							page: params.page
+						};
+					},
+					processResults: function(data, params) {
+						console.log(data);
+						// parse the results into the format expected by Select2
+						// since we are using custom formatting functions we do not need to
+						// alter the remote JSON data, except to indicate that infinite
+						// scrolling can be used
+						params.page = params.page || 1;
+
+						return {
+							results: data.items,
+							pagination: {
+								more: (params.page * 30) < data.total_count
+							}
+						};
+					},
+					cache: true
+				},
+				placeholder: 'Pilih Obat',
+				allowClear: true,
+				minimumInputLength: 1,
+				templateResult: formatRepo,
+				templateSelection: formatRepoSelection
+			});
+
+			function formatRepo(repo) {
+				if (repo.loading) {
+					return repo.text;
+				}
+				let text_name = '';
+				if (repo.jenis == 'generik') {
+					text_name += repo.nama_obat + " (<b style='color:blue'>" + repo.merk_pabrik + "</b>)| stok: " + repo.volume_kartu_akhir;
+				} else if (repo.jenis == 'non generik') {
+					text_name += repo.nama_obat + " (<b style='color:green'>" + repo.merk_pabrik + "</b>)| stok: " + repo.volume_kartu_akhir;
+				} else if (repo.jenis == 'bmhp') {
+					text_name += repo.nama_obat + " (<b style='color:blue'>" + repo.merk_pabrik + "</b>)| stok: " + repo.volume_kartu_akhir;
+				} else {
+					text_name += repo.nama_obat + " | stok : " + repo.volume_kartu_akhir;
+				}
+				var $container = $(
+					"<div class='select2-result-obat clearfix'>" +
+					"<div class='select2-result-obat__namaobat'>" + text_name + "</div>" +
+					"</div>"
+				);
+
+				return $container;
+			}
+
+			function formatRepoSelection(repo) {
+				let text_name = '';
+				if (repo.id == '') {
+					text_name = repo.text;
+				} else {
+					if (repo.jenis == 'generik') {
+						text_name += repo.nama_obat + " (" + repo.merk_pabrik + ")| stok: " + repo.volume_kartu_akhir;
+					} else if (repo.jenis == 'non generik') {
+						text_name += repo.nama_obat + " (" + repo.merk_pabrik + ")| stok: " + repo.volume_kartu_akhir;
+					} else if (repo.jenis == 'bmhp') {
+						text_name += repo.nama_obat + " (" + repo.merk_pabrik + ")| stok: " + repo.volume_kartu_akhir;
+					} else {
+						text_name += repo.nama_obat + " | stok : " + repo.volume_kartu_akhir;
+					}
+				}
+				return text_name;
+			}
 		});
 		//Date range picker
 		$('#tglkeluar').datepicker({

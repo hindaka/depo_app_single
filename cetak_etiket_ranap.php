@@ -38,11 +38,21 @@ $petunjuk=isset($etiket['petunjuk_khusus']) ? $etiket['petunjuk_khusus'] : '';
 
 $hariini=date("d/m/Y H:i:s");
 // //ambil value pasien lama
-$get_cetak ="SELECT rp.nomedrek,rp.nama as nama_pasien,rp.tanggallahir,rp.kelamin,g.nama as nama_obat,rd.volume FROM rincian_obat_pasien ro INNER JOIN rincian_transaksi_obat rto ON(rto.id_rincian_obat=ro.id_rincian_obat) INNER JOIN rincian_detail_obat rd ON(rto.id_trans_obat=rd.id_trans_obat) INNER JOIN registerpasien rp ON(ro.id_pasien=rp.id_pasien) INNER JOIN gobat g ON(rd.id_obat=g.id_obat) WHERE rd.id_detail_rincian=".$id_detail_rincian;
+$get_cetak ="SELECT rp.nomedrek,rp.nama as nama_pasien,rp.tanggallahir,rp.kelamin,g.nama as nama_obat,rd.volume,rd.volume,rd.jenis,rd.merk,rd.pabrikan FROM rincian_obat_pasien ro INNER JOIN rincian_transaksi_obat rto ON(rto.id_rincian_obat=ro.id_rincian_obat) INNER JOIN rincian_detail_obat rd ON(rto.id_trans_obat=rd.id_trans_obat) INNER JOIN registerpasien rp ON(ro.id_pasien=rp.id_pasien) INNER JOIN gobat g ON(rd.id_obat=g.id_obat) WHERE rd.id_detail_rincian=".$id_detail_rincian;
 $cetak = $db->query($get_cetak);
 $items = $cetak->fetch(PDO::FETCH_ASSOC);
 $hariini2 = date('d/m/Y');
-
+$nama_obat = isset($items['nama_obat']) ? $items['nama_obat'] : '';
+$jenis = isset($items['jenis']) ? $items['jenis'] : '';
+$merk = isset($items['merk']) ? $items['merk'] : '';
+$pabrikan = isset($items['pabrikan']) ? $items['pabrikan'] : '';
+if ($jenis == 'generik') {
+	$nama_text = $nama_obat . " (" . $pabrikan . ")";
+} else if ($jenis == 'non generik') {
+	$nama_text = $nama_obat . " (" . $merk . ")";
+} else {
+	$nama_text = $nama_obat;
+}
 //action
 echo "<html>
 <head>
@@ -50,7 +60,7 @@ echo "<html>
 <body onload=\"loadPrint()\"><center>INSTALASI FARMASI<br />RSUD BANDUNG KIWARI<hr></center>
 No. RM: ".$items['nomedrek']." &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; TGL: ".$hariini."<br><center>".$items['nama_pasien']." (".$items['tanggallahir'].")</center><br>
 <center><font size='2'>Sehari ".$sehari." ".$takaran." ".$minum."</font><br><br></center>
-Nama Obat: ".$items['nama_obat']."<br>Jumlah: ".$items['volume']."<br>Petunjuk Khusus: ".$petunjuk."<br>ED: ".$edate."
+Nama Obat: ".$nama_text."<br>Jumlah: ".$items['volume']."<br>Petunjuk Khusus: ".$petunjuk."<br>ED: ".$edate."
 <script type='text/javascript'>
 	function loadPrint(){
 		window.print();
@@ -61,4 +71,3 @@ Nama Obat: ".$items['nama_obat']."<br>Jumlah: ".$items['volume']."<br>Petunjuk K
 </script>
 </body>
 </html>";
-?>

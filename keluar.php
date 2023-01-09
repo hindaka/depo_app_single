@@ -32,8 +32,8 @@ $nomedrek = $data4["nomedrek"];
 $nama = $data4["nama"];
 //get list obat
 // $list_obat = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 AND g.flag_single_id='new'");
-$list_obat = $db->query("SELECT ks.*,g.nama,g.flag_single_id FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) WHERE ks.in_out='masuk' AND ks.volume_kartu_akhir>0 AND ks.id_warehouse='" . $id_depo . "'");
-$obat = $list_obat->fetchAll(PDO::FETCH_ASSOC);
+// $list_obat = $db->query("SELECT ks.id_kartu_ruangan,ks.id_obat,SUM(ks.volume_kartu_akhir,g.nama,g.flag_single_id FROM kartu_stok_ruangan ks INNER JOIN gobat g ON(ks.id_obat=g.id_obat) WHERE ks.in_out='masuk' AND ks.volume_kartu_akhir>0 AND ks.id_warehouse='" . $id_depo . "'");
+// $obat = $list_obat->fetchAll(PDO::FETCH_ASSOC);
 $list_rtt = $db->query("SELECT ws.id_warehouse_stok,ws.id_warehouse,ws.id_obat,ws.stok,g.nama FROM warehouse_stok ws INNER JOIN warehouse w ON(w.id_warehouse=ws.id_warehouse) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE w.id_warehouse='" . $id_depo . "' AND ws.stok>0 ORDER BY g.nama ASC");
 $obat_rtt = $list_rtt->fetchAll(PDO::FETCH_ASSOC);
 function pembulatan($total)

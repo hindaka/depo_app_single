@@ -40,6 +40,8 @@ if ($mode == 'draft') {
 		$volume_in = isset($kartu['volume']) ? $kartu['volume'] : '0';
 		$volume_out = 0;
 		$harga_beli = isset($kartu['harga_beli']) ? $kartu['harga_beli'] : '0';
+		$no_batch = isset($kartu['no_batch']) ? $kartu['no_batch'] : '';
+		$expired = isset($kartu['expired']) ? $kartu['expired'] : '';
 		$created_at = date('Y-m-d H:i:s');
 		$i = 0;
 		$in_out = "masuk";
@@ -48,10 +50,10 @@ if ($mode == 'draft') {
 		$check = $get_check->fetch(PDO::FETCH_ASSOC);
 		if ($check['total'] == 1) {
 			//sum
-			$get_sum = $db->query("SELECT SUM(volume_kartu_akhir) as sisa FROM kartu_stok_ruangan WHERE id_warehouse='" . $id_depo . "' AND id_obat='" . $id_obat . "' AND in_out='masuk' AND volume_kartu_akhir>0");
+			$get_sum = $db->query("SELECT SUM(volume_kartu_akhir) as sisa FROM kartu_stok_ruangan WHERE id_warehouse='" . $id_depo . "' AND id_obat='" . $id_obat . "' AND in_out='masuk' AND volume_kartu_akhir>0 AND no_batch='" . $no_batch . "' AND expired='" . $expired . "'");
 			$sum = $get_sum->fetch(PDO::FETCH_ASSOC);
 			$sisa_stok = isset($sum['sisa']) ? $sum['sisa'] : 0;
-			$stmt = $db->query("UPDATE warehouse_stok SET stok=" . $sisa_stok . " WHERE id_warehouse='" . $id_depo . "' AND id_obat='" . $id_obat . "'");
+			$stmt = $db->query("UPDATE warehouse_stok SET stok=" . $sisa_stok . " WHERE id_warehouse='" . $id_depo . "' AND id_obat='" . $id_obat . "' AND no_batch='" . $no_batch . "' AND expired='" . $expired . "'");
 		} else {
 			$stmt = $db->prepare("INSERT INTO `warehouse_stok`(`id_warehouse`, `id_obat`, `stok`, `expired`, `no_batch`, `created_at`)VALUES (:id_warehouse,:id_obat,:stok,:expired,:no_batch,:created_at)");
 			$stmt->bindParam(":id_warehouse", $id_depo, PDO::PARAM_INT);

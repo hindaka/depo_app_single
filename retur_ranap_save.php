@@ -41,7 +41,7 @@ try {
 	} else {
 		$volume_sisa = $volume_real - $retur;
 	}
-	$h3 = $db->query("SELECT * FROM warehouse_out wo INNER JOIN kartu_stok_ruangan ks ON(wo.id_kartu_ruangan=ks.id_kartu_ruangan) INNER JOIN warehouse_stok ws ON(wo.id_warehouse_stok=ws.id_warehouse_stok) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE wo.id_detail_rincian='" . $id_detail_rincian . "'");
+	$h3 = $db->query("SELECT ks.*,wo.id_warehouse_stok,g.nama,g.id_obat FROM warehouse_out wo INNER JOIN kartu_stok_ruangan ks ON(wo.id_kartu_ruangan=ks.id_kartu_ruangan) INNER JOIN warehouse_stok ws ON(wo.id_warehouse_stok=ws.id_warehouse_stok) INNER JOIN gobat g ON(g.id_obat=ws.id_obat) WHERE wo.id_detail_rincian='" . $id_detail_rincian . "'");
 	$data_wo = $h3->rowCount();
 	if ($data_wo > 0) {
 		$r3 = $h3->fetch(PDO::FETCH_ASSOC);
@@ -51,12 +51,17 @@ try {
 		$id_warehouse = $r3['id_warehouse'];
 		$id_ref = $r3['ref'];
 		$kartu = $r3['id_kartu_ruangan'];
+		$jenis = $r3['jenis'];
+		$merk = $r3['merk'];
+		$pabrikan = $r3['pabrikan'];
 		$id_warehouse_stok = $r3['id_warehouse_stok'];
 		$volume_in = $retur;
 		$in_out = "masuk";
 		$tujuan = "-";
 		$keterangan = "Retur Obat id_rincian/" . $id_rincian_obat;
 		$created_at = date('Y-m-d H:i:s');
+		$expired = isset($r3['expired']) ? $r3['expired'] : '';
+		$ex_date = substr($expired, 0, 10);
 		$volume_kartu_akhir = $retur;
 		$volume_out = 0;
 		$hargasatuan = $r3['harga_beli'] * 1.2;
@@ -92,11 +97,14 @@ try {
 			$hargatuslah = 0;
 		}
 		//insert kartu retur
-		$ins_kartu = $db->prepare("INSERT INTO `kartu_stok_ruangan`(`id_kartu_gobat`, `id_obat`, `id_warehouse`, `sumber_dana`, `volume_kartu_awal`, `volume_kartu_akhir`, `volume_sisa`, `in_out`, `tujuan`, `volume_in`, `volume_out`, `expired`, `no_batch`, `harga_beli`, `harga_jual`, `id_tuslah`,`ket_tuslah`, `created_at`, `keterangan`,`ref`,`mem_id`) VALUES(:id_kartu_gobat,:id_obat,:id_warehouse,:sumber_dana,:volume_kartu_awal,:volume_kartu_akhir,:volume_sisa,:in_out,:tujuan,:volume_in,:volume_out,:expired,:no_batch,:harga_beli,:harga_jual,:id_tuslah,:ket_tuslah,:created_at,:keterangan,:ref,:mem_id)");
+		$ins_kartu = $db->prepare("INSERT INTO `kartu_stok_ruangan`(`id_kartu_gobat`, `id_obat`, `id_warehouse`, `sumber_dana`,`jenis`,`merk`,`pabrikan`, `volume_kartu_awal`, `volume_kartu_akhir`, `volume_sisa`, `in_out`, `tujuan`, `volume_in`, `volume_out`, `expired`, `no_batch`, `harga_beli`, `harga_jual`, `id_tuslah`,`ket_tuslah`, `created_at`, `keterangan`,`ref`,`mem_id`) VALUES(:id_kartu_gobat,:id_obat,:id_warehouse,:sumber_dana,:jenis,:merk,:pabrikan,:volume_kartu_awal,:volume_kartu_akhir,:volume_sisa,:in_out,:tujuan,:volume_in,:volume_out,:expired,:no_batch,:harga_beli,:harga_jual,:id_tuslah,:ket_tuslah,:created_at,:keterangan,:ref,:mem_id)");
 		$ins_kartu->bindParam(":id_kartu_gobat", $r3['id_kartu_gobat'], PDO::PARAM_INT);
 		$ins_kartu->bindParam(":id_obat", $id_obat, PDO::PARAM_INT);
 		$ins_kartu->bindParam(":id_warehouse", $id_warehouse, PDO::PARAM_INT);
 		$ins_kartu->bindParam(":sumber_dana", $r3['sumber_dana'], PDO::PARAM_STR);
+		$ins_kartu->bindParam(":jenis", $r3['jenis'], PDO::PARAM_STR);
+		$ins_kartu->bindParam(":merk", $r3['merk'], PDO::PARAM_STR);
+		$ins_kartu->bindParam(":pabrikan", $r3['pabrikan'], PDO::PARAM_STR);
 		$ins_kartu->bindParam(":volume_kartu_awal", $r3['volume_kartu_awal'], PDO::PARAM_INT);
 		$ins_kartu->bindParam(":volume_kartu_akhir", $volume_kartu_akhir, PDO::PARAM_INT);
 		$ins_kartu->bindParam(":volume_sisa", $volume_kartu_akhir, PDO::PARAM_INT);
@@ -104,7 +112,7 @@ try {
 		$ins_kartu->bindParam(":tujuan", $tujuan, PDO::PARAM_STR);
 		$ins_kartu->bindParam(":volume_in", $volume_in, PDO::PARAM_INT);
 		$ins_kartu->bindParam(":volume_out", $volume_out, PDO::PARAM_INT);
-		$ins_kartu->bindParam(":expired", $r3['expired'], PDO::PARAM_STR);
+		$ins_kartu->bindParam(":expired", $ex_date, PDO::PARAM_STR);
 		$ins_kartu->bindParam(":no_batch", $r3['no_batch'], PDO::PARAM_STR);
 		$ins_kartu->bindParam(":harga_beli", $r3['harga_beli'], PDO::PARAM_INT);
 		$ins_kartu->bindParam(":harga_jual", $hargatuslah, PDO::PARAM_INT);
@@ -129,12 +137,12 @@ try {
 		$history_retur->bindParam(":petugas_input", $id_petugas, PDO::PARAM_INT);
 		$history_retur->execute();
 		//update volume kartu_akhir
-		// $up_awal = $db->query("UPDATE kartu_stok_ruangan SET volume_kartu_akhir=volume_kartu_akhir+".$retur." WHERE id_kartu_ruangan='".$id_ref."'");
+		$up_awal = $db->query("UPDATE kartu_stok_ruangan SET volume_kartu_akhir=volume_kartu_akhir+" . $retur . " WHERE id_kartu_ruangan='" . $id_ref . "'");
 		//update detail_rincian_obat
 		$up_detail = $db->query("UPDATE rincian_detail_obat SET volume=" . $volume_sisa . ",harga_satuan='" . $hargasatuan . "',sub_total='" . $hargatuslah . "' WHERE id_detail_rincian='" . $id_detail_rincian . "'");
-		//update warehouse_out
+		// //update warehouse_out
 		$up_ware = $db->query("UPDATE warehouse_out SET volume=" . $volume_out . ",harga_beli='" . $r3['harga_beli'] . "',harga_satuan='" . $hargasatuan . "',total_harga='" . $hargatuslah . "' WHERE id_detail_rincian='" . $id_detail_rincian . "'");
-		//update warehouse_stok
+		// //update warehouse_stok
 		$get_sisa = $db->query("SELECT SUM(volume_kartu_akhir) AS total FROM kartu_stok_ruangan WHERE id_obat='" . $id_obat . "' AND id_warehouse='" . $id_depo . "' AND in_out='masuk' AND volume_kartu_akhir>0");
 		$sisa_stok = $get_sisa->fetch(PDO::FETCH_ASSOC);
 		$stok_retur = $sisa_stok['total'];
